@@ -1,42 +1,64 @@
-# LLM PDF Chatbot
- An example LLM chatbot created with Cohere API and Streamlit that references a PDF document.
+# Habitat for Humanity Hong Kong Informational Assistant
 
-## Quick Start
-1. [Fork and then clone this repository](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo#about-forks) to a folder on your computer.
-  
-1. Open Visual Studio Code and then choose **File > Open Folder...** to open and edit the code.
+A production-ready RAG (Retrieval-Augmented Generation) chatbot designed to parse institutional documents and provide verified, context-aware answers regarding the mission, volunteer opportunities, and local community programs of Habitat for Humanity Hong Kong.
 
-1. Open the terminal window inside Visual Studio Code and type the following command to install the required Python packages.
+---
 
-   > pip install -r requirements.txt
+## 📌 Project Overview
 
-   Substitute `pip` for `pip3` if you have problems with this.
+### The Problem
+Volunteers, donors, and the general public often find it tedious to dig through long PDF documents, training manuals, and FAQs to find specific operational steps. In critical local programs, misinformation or outdated logistics can slow down community engagement.
 
-1. Type the following terminal commands to create the necessary secrets file. Not having this will result in an error.
+### Intended User
+* **Local Volunteers:** Seeking instant, accurate updates on how to join housing initiatives.
+* **Corporate Partners & Donors:** Looking for verified information on institutional compliance, mission alignment, and strategic programs.
+* **Internal Staff:** Using it as a rapid internal directory to query localized knowledge bases.
 
-   > mkdir .streamlit
+### Key Features
+* **Interactive Onboarding UI:** A minimalist splash/welcome screen featuring an initialization protocol to guide users seamlessly into the system before hitting the chat layout.
+* **Crisp, High-Contrast Interface:** Custom-themed, distraction-free pure white UI with tailored geometric icon identifiers for distinct visual hierarchies.
+* **Automated Multi-Document Indexing:** Dynamically handles, reads, and chunks overlapping data across separate background resource PDFs.
 
-   > touch .streamlit/secrets.toml
+---
 
-   > echo "COHERE_API_KEY = 'PASTE YOUR API KEY HERE'" > .streamlit/secrets.toml
+## 🧬 Project Origin & Evolution
 
-4. Run the app by typing the following command in the terminal window. 
-   > streamlit run chatbot.py
-   
-   A new browser window will open where you can interact with the chatbot.
+This application was originally adapted from a foundation template designed to parse the **Hong Kong International School (HKIS) Bus Schedule**. 
 
-> [!NOTE]
-> If you didn't paste a valid Cohere API key into your secrets file you will need to enter it into the sidebar for the chatbot to work.
+To elevate the utility and complexity of the starter application, the following architectural transformations were made:
+* **Domain Pivot:** Completely purged the HKIS transport scheduling assets and replaced them with custom, targeted knowledge bases detailing **Habitat for Humanity Hong Kong** operational guidelines.
+* **Data Synthesis with Gemini:** Used advanced LLM prompting (Gemini) to generate and clean the structural reference text data for the new non-profit domain, ensuring the target PDFs were optimized for high-density chunking and vector retrieval.
+* **Feature Injection:** The original framework lacked an entry point and rendered instantly into an empty chat window. I engineered a dedicated state-driven onboarding splash page to create a controlled user initialization sequence.
 
-5. Make minor changes to the code, save and then run your app again to see what happens.
+---
 
-## Challenges
-- Refer to the Cohere [Chat documentation](https://docs.cohere.com/reference/chat) for clues on how to enhance the behaviour of the chatbot.
-- [Complete 'Module 4: Deployment' of the LLMU course on Cohere.com](https://docs.cohere.com/docs/intro-deployment) to create a different kind of LLM powered app with Cohere and Streamlit.
-- Read the [Streamlit Basics guide](https://docs.streamlit.io/get-started/fundamentals/main-concepts) for clues to help you extend the UI of this app further.
+## 🛠️ Code Adaptation & Optimization
 
-### Advanced Challenges
-- Turn it into a [Retrieval Augmented Generation (RAG) app](https://docs.cohere.com/docs/retrieval-augmented-generation-rag) by connecting it to your own data [using Langchain](https://docs.cohere.com/docs/cohere-and-langchain)
-- Use [Streamlit secrets](https://docs.streamlit.io/deploy/streamlit-community-cloud/deploy-your-app/secrets-management) to securely pass your API key to the app without having to type it into the sidebar.
-> [!CAUTION]
-> You should never include your API key in any code that you publish online, especially on GitHub. If someone copies your key they can access Cohere using your account without your permission. Creating a secret on Streamlit is the only way to publish your app to automatically use your API key without exposing it for the world to see.
+This application significantly iterates upon and refines standard Streamlit-Cohere starter configurations to resolve structural and API bottlenecks:
+
+1. **State-Driven Multi-Screen Layout:** Implemented `st.session_state` parameters to segment the application into a clean landing viewport and an active chat stage, moving away from single-page scrolling baselines.
+2. **Native Architecture Styling:** Eliminated unstable raw CSS/HTML strings that frequently trigger Streamlit layout compiler breaks (`metrics_util.py`). Visual overhauls are managed securely via a native `.streamlit/config.toml` layout declaration.
+3. **Instant Display Rerun (`st.rerun()`):** Resolved the notorious "one-step behind" rendering bug common in naive Streamlit chat loops. The application forces an immediate structural re-evaluation upon cache mutations, causing AI replies to render instantly.
+
+---
+
+## 🔄 Prompt & RAG Iteration
+
+Developing this platform involved moving away from open-ended text completion to strict contextual boundaries:
+
+### Before (Starter Approach)
+* **Prompt:** Default generic system settings. 
+* **Behavior:** The assistant would hallucinate outside information, suggest international contact pages instead of Hong Kong offices, or crash entirely because old `"assistant"` roles violated strict schema updates.
+
+### After (Optimized Production Build)
+* **Prompt:** A deterministic, action-focused `preamble` mapping core local initiatives (*Project Home Works*, *Project School Works*).
+* **Behavior:** Responses are strictly constrained to the localized domain. If data is absent, it seamlessly defaults to a polite corporate redirection to `habitat.org.hk`. Data arrays explicitly match current API criteria via capitalized `"User"` and `"Chatbot"` role indices.
+
+---
+
+## 📊 Evaluation & Verification
+
+### Test Case: Volunteer Inquiry
+* **User Input:** *"How can I help clean flats for elderly residents in Hong Kong?"*
+* **RAG Retrieval Engine:** Scans `docs/habitat_volunteer_faq.pdf` and extracts matching text blocks regarding core program tasks.
+* **System Output:** Recomposes information natively into an actionable bulleted summary specifying the logistics for **Project Home Works**, ensuring high context relevance without semantic drift.
