@@ -62,3 +62,19 @@ Developing this platform involved moving away from open-ended text completion to
 * **User Input:** *"How can I help clean flats for elderly residents in Hong Kong?"*
 * **RAG Retrieval Engine:** Scans `docs/habitat_volunteer_faq.pdf` and extracts matching text blocks regarding core program tasks.
 * **System Output:** Recomposes information natively into an actionable bulleted summary specifying the logistics for **Project Home Works**, ensuring high context relevance without semantic drift.
+
+---
+
+## 📝 Personal Reflection & Process
+
+### 1. Evolving the Prompt and RAG Framework
+When I first ran the code, the bot was still trying to read my teacher's old files about the HKIS bus schedules, which obviously made no sense for a charity app. I had to wipe out those bus documents completely, use Gemini to write up fresh info about Habitat for Humanity, and feed those new PDFs into the system. At first, the bot would still hallucinate and give random answers using its general internet memory. To lock it down, I changed the backend system prompt to a strict "preamble" that forces the bot to only look at my new files, focus strictly on local programs like **Project Home Works**, and politely tell the user to check `habitat.org.hk` instead of making things up if it gets stuck.
+
+### 2. The Most Revealing Failure Mode
+The most frustrating bug I hit was the "One-Step Behind" glitch, where I would type a message, hit enter, and absolutely nothing would happen on screen. But the second I typed a *next* message, the answer to my *first* message would suddenly pop up. This happened because Streamlit re-runs the whole code file from top to bottom every single time you interact with it. Since the code that draws the chat history on the screen was sitting above the part where the AI actually saves the new answer, the app was always one step behind reality. Adding `st.rerun()` at the very end forced the app to instantly refresh itself, which taught me a ton about how the timing of web apps actually works.
+
+### 3. Current Limitations and Future Improvements
+Right now, the biggest limitation is how the app reads the PDFs. It uses a basic counting system that chops the text into exact 1,000-character blocks, which means it constantly cuts sentences right in half and splits paragraphs up awkwardly. If I had more time, I'd upgrade it to a smart text splitter that actually waits for the end of a paragraph before cutting it, so the AI gets clean, complete thoughts. I’d also love to add a memory feature or a small database so that users don't lose their entire chat history the second they refresh or close their browser tab.
+
+### 4. Retrospective Strategic Changes
+If I could start this whole project over from day one, I would definitely build the visual layout and the screen settings first before touching any of the AI logic. I wasted a ton of time trying to force a clean white background and a welcome page by injecting messy custom HTML and CSS strings directly into the Python code, which just kept crashing the app. If I had just set up the clean `.streamlit/config.toml` theme file and coded the start-screen logic first, I would have had a beautiful, stable workspace from the start and saved myself hours of painful debugging.
