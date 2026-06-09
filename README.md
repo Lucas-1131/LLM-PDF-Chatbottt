@@ -61,5 +61,4 @@ Developing this platform involved moving away from open-ended text completion to
 ### Test Case: Volunteer Inquiry
 * **User Input:** *"How can I help clean flats for elderly residents in Hong Kong?"*
 * **RAG Retrieval Engine:** Scans `docs/habitat_volunteer_faq.pdf` and extracts matching text blocks regarding core program tasks.
-<<<<<<< HEAD
 * **System Output:** Recomposes information natively into an actionable bulleted summary specifying the logistics for **Project Home Works**, ensuring high context relevance without semantic drift.
